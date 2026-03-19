@@ -1,3 +1,4 @@
+const Notification = require("../models/Notification");
 const User = require("../models/User");
 
 exports.getUser = async (req, res) => {
@@ -16,9 +17,19 @@ exports.getUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
+    let updateData = { ...req.body };
+
+    if (req.files && req.files.profilePic) {
+      updateData.profilePic = req.files.profilePic[0].filename;
+    }
+
+    if (req.files && req.files.coverPic) {
+      updateData.coverPic = req.files.coverPic[0].filename;
+    }
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { $set: req.body },
+      { $set: updateData },
       { new: true },
     );
 
@@ -39,37 +50,51 @@ exports.deleteUser = async (req, res) => {
 };
 
 exports.followUser = async (req, res) => {
+  const targetUserId = req.params.id;
+  const currentUserId = req.user?.id;
+
   try {
-    if (!req.user) {
+    if (!currentUserId) {
       return res.status(401).json("No user info");
     }
 
-    if (req.user.id === req.params.id) {
+    if (currentUserId === targetUserId) {
       return res.status(403).json("You cannot follow yourself");
     }
 
-    const user = await User.findById(req.params.id);
-    const currentUser = await User.findById(req.user.id);
+    const user = await User.findById(targetUserId);
+    const currentUser = await User.findById(currentUserId);
 
     if (!user || !currentUser) {
       return res.status(404).json("User not found");
     }
 
-    if (!user.followers.includes(req.user.id)) {
-      await user.updateOne({
-        $push: { followers: req.user.id },
-      });
+    const isAlreadyFollowing = user.followers
+      .map((id) => id.toString())
+      .includes(currentUserId);
 
-      await currentUser.updateOne({
-        $push: { following: req.params.id },
-      });
+    if (!isAlreadyFollowing) {
+      await user.updateOne({ $push: { followers: currentUserId } });
+      await currentUser.updateOne({ $push: { following: targetUserId } });
 
-      res.status(200).json("User followed");
+      try {
+        const newNotification = await Notification.create({
+          senderId: currentUserId,
+          receiverId: targetUserId,
+          type: "follow",
+        });
+      } catch (notifErr) {
+        console.error(
+          "KRİTİK HATA: Bildirim oluşturulurken hata alındı!",
+          notifErr.message,
+        );
+      }
+      return res.status(200).json("User followed");
     } else {
-      res.status(400).json("Already following");
+      return res.status(400).json("Already following");
     }
   } catch (err) {
-    res.status(500).json(err);
+    return res.status(500).json({ error: "Server error", detail: err.message });
   }
 };
 

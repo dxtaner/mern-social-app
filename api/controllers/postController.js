@@ -1,9 +1,14 @@
+const Notification = require("../models/Notification");
 const Post = require("../models/Post");
 const User = require("../models/User");
 
 exports.createPost = async (req, res) => {
   try {
-    const newPost = new Post(req.body);
+    const newPost = new Post({
+      userId: req.user.id,
+      desc: req.body.desc,
+      img: req.file ? req.file.filename : req.body.img,
+    });
 
     const savedPost = await newPost.save();
 
@@ -36,6 +41,13 @@ exports.likePost = async (req, res) => {
     if (!post.likes.includes(req.user.id)) {
       await post.updateOne({
         $push: { likes: req.user.id },
+      });
+
+      await getNotifications.create({
+        senderId: req.user.id,
+        receiverId: post.userId,
+        type: "like",
+        postId: post._id,
       });
 
       res.status(200).json("Post liked");

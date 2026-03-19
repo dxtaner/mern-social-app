@@ -1,4 +1,5 @@
 const Comment = require("../models/Comment");
+const Notification = require("../models/Notification");
 
 exports.addComment = async (req, res) => {
   try {
@@ -9,6 +10,13 @@ exports.addComment = async (req, res) => {
     });
 
     const savedComment = await newComment.save();
+
+    await Notification.create({
+      senderId: req.user.id,
+      receiverId: post.userId,
+      type: "comment",
+      postId: post._id,
+    });
 
     res.status(200).json(savedComment);
   } catch (err) {
