@@ -1,10 +1,18 @@
 const router = require("express").Router();
 const userController = require("../controllers/userController");
 const verifyToken = require("../middleware/authMiddleware");
+const upload = require("../middleware/upload");
 
 router.get("/:id", verifyToken, userController.getUser);
 
-router.put("/:id", verifyToken, userController.updateUser);
+router.put(
+  "/:id",
+  upload.fields([
+    { name: "profilePic", maxCount: 1 },
+    { name: "coverPic", maxCount: 1 },
+  ]),
+  userController.updateUser,
+);
 
 router.delete("/:id", verifyToken, userController.deleteUser);
 
