@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const postController = require("../controllers/postController");
 const verifyToken = require("../middleware/authMiddleware");
+const upload = require("../middleware/upload");
 
-router.post("/", verifyToken, postController.createPost);
+router.post("/", upload.single("img"), postController.createPost);
 
 router.delete("/:id", verifyToken, postController.deletePost);
 
