@@ -3,6 +3,8 @@ const postController = require("../controllers/postController");
 const verifyToken = require("../middleware/authMiddleware");
 const upload = require("../middleware/upload");
 
+router.get("/all", verifyToken, postController.getAllPosts);
+
 router.post("/", upload.single("img"), postController.createPost);
 
 router.delete("/:id", verifyToken, postController.deletePost);
