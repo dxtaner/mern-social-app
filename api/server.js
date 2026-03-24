@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/users");
@@ -22,9 +23,10 @@ app.use(
   }),
 );
 
-// Middlewares
 app.use(express.json());
 app.use(cookieParser());
+
+app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 // Routes
 app.use("/api/auth", authRoutes);
