@@ -1,0 +1,240 @@
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --primary-blue: #4f46e5;
+  --text-dark: #1e293b;
+}
+
+.profile-page {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+.profile-main {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 0 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Glass Card Efekti */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* Header Kısmı */
+.cover-wrapper {
+  height: 280px;
+  position: relative;
+}
+
+.cover-img-full {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.glass-edit-btn {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cover-btn {
+  bottom: 20px;
+  right: 20px;
+}
+.glass-edit-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Identity Bölümü */
+.profile-identity {
+  display: flex;
+  align-items: flex-end;
+  padding: 0 40px 30px;
+  gap: 25px;
+  position: relative;
+}
+
+.avatar-container {
+  margin-top: -75px;
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.main-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 40px; /* Modern yuvarlatılmış kare */
+  border: 6px solid var(--glass-bg);
+  object-fit: cover;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-change-overlay {
+  position: absolute;
+  inset: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.avatar-container:hover .avatar-change-overlay {
+  opacity: 1;
+}
+
+.identity-text h1 {
+  font-size: 28px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.user-email {
+  color: #64748b;
+  margin: 4px 0 12px;
+  font-weight: 500;
+}
+
+.mini-stats {
+  display: flex;
+  gap: 20px;
+}
+.mini-stat {
+  font-size: 15px;
+  color: #475569;
+}
+.mini-stat b {
+  color: var(--text-dark);
+}
+
+.identity-actions {
+  margin-left: auto;
+  align-self: center;
+}
+
+/* Butonlar */
+.follow-btn-primary {
+  background: var(--primary-blue);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.settings-btn-outline {
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Settings Card */
+.settings-card {
+  padding: 40px;
+}
+.card-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+.card-header p {
+  color: #64748b;
+  margin: 8px 0 30px;
+}
+
+.settings-grid-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.input-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.input-group input {
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #f8fafc;
+  transition: 0.3s;
+}
+
+.input-group input:focus {
+  border-color: var(--primary-blue);
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+.form-actions {
+  grid-column: span 2;
+  margin-top: 10px;
+}
+
+.glass-submit-btn {
+  background: var(--primary-blue);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 14px;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+}
+
+/* Mobil */
+@media (max-width: 768px) {
+  .profile-identity {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 40px;
+  }
+  .avatar-container {
+    margin-top: -60px;
+  }
+  .identity-actions {
+    margin-left: 0;
+  }
+  .settings-grid-form {
+    grid-template-columns: 1fr;
+  }
+  .form-actions {
+    grid-column: span 1;
+  }
+}
