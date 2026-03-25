@@ -3,6 +3,8 @@ const userController = require("../controllers/userController");
 const verifyToken = require("../middleware/authMiddleware");
 const upload = require("../middleware/upload");
 
+router.get("/all", verifyToken, userController.getAllUsers);
+
 router.get("/:id", verifyToken, userController.getUser);
 
 router.put(
