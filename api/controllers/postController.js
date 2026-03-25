@@ -37,29 +37,35 @@ exports.deletePost = async (req, res) => {
 exports.likePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json("Post not found");
 
-    if (!post.likes.includes(req.user.id)) {
-      await post.updateOne({
-        $push: { likes: req.user.id },
-      });
+    const currentUserId = req.user.id;
 
-      await getNotifications.create({
-        senderId: req.user.id,
-        receiverId: post.userId,
-        type: "like",
-        postId: post._id,
-      });
+    if (!post.likes.includes(currentUserId)) {
+      await post.updateOne({ $push: { likes: currentUserId } });
 
-      res.status(200).json("Post liked");
+      try {
+        await Notification.create({
+          senderId: currentUserId,
+          receiverId: post.userId,
+          type: "like",
+          postId: post._id,
+        });
+      } catch (nErr) {
+        console.log("The notification could not be sent", nErr.message);
+      }
+
+      const updatedPost = await Post.findById(req.params.id);
+      res.status(200).json(updatedPost);
     } else {
-      await post.updateOne({
-        $pull: { likes: req.user.id },
-      });
+      await post.updateOne({ $pull: { likes: currentUserId } });
 
-      res.status(200).json("Post unliked");
+      const updatedPost = await Post.findById(req.params.id);
+      res.status(200).json(updatedPost);
     }
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
