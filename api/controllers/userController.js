@@ -15,6 +15,15 @@ exports.getUser = async (req, res) => {
   }
 };
 
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ message: "Users not found", error: err });
+  }
+};
+
 exports.updateUser = async (req, res) => {
   try {
     let updateData = { ...req.body };
