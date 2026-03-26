@@ -1,34 +1,128 @@
-.home {
+/* GLOBAL */
+.app {
+  background: #f4f6f9;
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
-  padding: 20px;
+  flex-direction: column;
 }
 
+/* MAIN GRID */
 .home-container {
-  width: 600px;
+  display: grid;
+  grid-template-columns: 260px 1fr 320px;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
+/* SIDEBAR */
+.sidebar-section {
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+}
+
+/* MAIN */
+.main-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* WELCOME CARD */
 .welcome-card {
   background: white;
   padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
 }
 
-.post-card {
+.welcome-card h1 {
+  font-size: 22px;
+}
+
+.welcome-card span {
+  color: #4f46e5;
+}
+
+.welcome-card p {
+  color: #666;
+  margin-top: 5px;
+}
+
+/* CREATE CARD */
+.create-card {
   background: white;
   padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
 }
 
-.post-user {
-  font-weight: bold;
-  margin-bottom: 5px;
+/* FEED */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.post-content {
-  color: #555;
+.post-wrapper {
+  background: white;
+  padding: 10px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+/* LOADER */
+.loader-box {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: #777;
+}
+
+/* RIGHT PANEL */
+.right-section {
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+}
+
+/* FOOTER */
+.footer {
+  margin-top: auto;
+  text-align: center;
+  padding: 15px;
+  background: white;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+  color: #666;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .home-container {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .right-section {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-section {
+    display: none;
+  }
 }
