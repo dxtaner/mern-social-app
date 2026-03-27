@@ -1,40 +1,36 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useUsers } from "../context/UserContext";
+import { useNotification } from "../context/NotificationContext";
 import { useState, useEffect } from "react";
 import "./navbar.css";
-
-const useDebounce = (value, delay) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => clearTimeout(handler);
-  }, [value, delay]);
-
-  return debouncedValue;
-};
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const { allUsers } = useUsers();
+  const { notifications, markAsRead } = useNotification();
   const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const BASE_URL = "http://localhost:8800";
-
   const currentUser = user?.user;
 
   const profilePic = currentUser?.profilePic
     ? `${BASE_URL}/images/${currentUser.profilePic}`
     : `https://api.dicebear.com/7.x/initials/svg?seed=${currentUser?.username}`;
+
+  const useDebounce = (value, delay) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+    useEffect(() => {
+      const handler = setTimeout(() => setDebouncedValue(value), delay);
+      return () => clearTimeout(handler);
+    }, [value, delay]);
+    return debouncedValue;
+  };
 
   const debouncedSearch = useDebounce(search, 300);
 
@@ -43,15 +39,10 @@ const Navbar = () => {
       setFilteredUsers([]);
       return;
     }
-
-    setLoading(true);
-
     const results = allUsers.filter((u) =>
       u.username.toLowerCase().includes(debouncedSearch.toLowerCase()),
     );
-
     setFilteredUsers(results);
-    setLoading(false);
     setActiveIndex(-1);
   }, [debouncedSearch, allUsers]);
 
@@ -63,104 +54,135 @@ const Navbar = () => {
 
   const handleKeyDown = (e) => {
     if (!filteredUsers.length) return;
-
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown")
       setActiveIndex((prev) =>
         prev < filteredUsers.length - 1 ? prev + 1 : 0,
       );
-    }
-
-    if (e.key === "ArrowUp") {
+    if (e.key === "ArrowUp")
       setActiveIndex((prev) =>
         prev > 0 ? prev - 1 : filteredUsers.length - 1,
       );
-    }
-
-    if (e.key === "Enter" && activeIndex >= 0) {
+    if (e.key === "Enter" && activeIndex >= 0)
       handleSelectUser(filteredUsers[activeIndex]._id);
+  };
+
+  const renderNotificationText = (n) => {
+    const sender = allUsers.find((u) => u._id === n.senderId);
+    const senderName = sender ? sender.username : "Biri";
+
+    switch (n.type) {
+      case "like":
+        return `${senderName} gönderini beğendi ❤️`;
+      case "comment":
+        return `${senderName} gönderine yorum yaptı 💬`;
+      case "follow":
+        return `${senderName} seni takip etmeye başladı 👤`;
+      default:
+        return `${senderName} yeni bir bildirim gönderdi 🔔`;
+    }
+  };
+
+  const handleNotificationClick = (n) => {
+    markAsRead(n._id);
+    setShowNotifications(false);
+
+    if (n.type === "follow") {
+      navigate(`/profile/${n.senderId}`);
+    } else if (n.postId) {
+      navigate(`/post/${n.postId}`);
+    } else {
+      navigate(`/profile/${n.senderId}`);
     }
   };
 
   return (
     <nav className="navbar">
-      <div className="navbar-container">
-        {/* LEFT */}
-        <div className="navbar-left">
-          <Link to="/" className="logo">
-            Social<span>App</span>
-          </Link>
-        </div>
+      <div className="navbar-left">
+        <Link to="/" className="logo">
+          Social<span>App</span>
+        </Link>
+      </div>
 
-        {/* CENTER */}
-        <div className="navbar-center">
-          <div className="search-box">
-            <span className="search-icon">🔍</span>
-
-            <input
-              type="text"
-              placeholder="Kullanıcı ara..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-
-            {search.trim() !== "" && (
-              <div className="search-dropdown">
-                {loading && <div className="search-item">Yükleniyor...</div>}
-
-                {!loading && filteredUsers.length === 0 && (
-                  <div className="search-item no-result">
-                    Kullanıcı bulunamadı
+      <div className="navbar-center">
+        <div className="search-box">
+          <span className="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Kullanıcı ara..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+          {search.trim() !== "" && (
+            <div className="search-dropdown">
+              {filteredUsers.length === 0 && (
+                <div className="search-item no-result">
+                  Kullanıcı bulunamadı
+                </div>
+              )}
+              {filteredUsers.map((u, index) => {
+                const pic = u.profilePic
+                  ? `${BASE_URL}/images/${u.profilePic}`
+                  : `https://api.dicebear.com/7.x/initials/svg?seed=${u.username}`;
+                return (
+                  <div
+                    key={u._id}
+                    className={`search-item ${index === activeIndex ? "active" : ""}`}
+                    onClick={() => handleSelectUser(u._id)}
+                  >
+                    <img src={pic} alt={u.username} className="search-avatar" />
+                    <span>{u.username}</span>
                   </div>
-                )}
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
 
-                {!loading &&
-                  filteredUsers.map((u, index) => {
-                    const profilePic = u.profilePic
-                      ? `${BASE_URL}/images/${u.profilePic}`
-                      : `https://api.dicebear.com/7.x/initials/svg?seed=${u.username}`;
+      <div className="navbar-right">
+        <Link to="/" className="icon-btn">
+          🏠
+        </Link>
 
-                    return (
-                      <div
-                        key={u._id}
-                        className={`search-item ${
-                          index === activeIndex ? "active" : ""
-                        }`}
-                        onClick={() => handleSelectUser(u._id)}
-                      >
-                        <img
-                          src={profilePic}
-                          alt={u.username}
-                          className="search-avatar"
-                          onError={(e) => {
-                            e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${u.username}`;
-                          }}
-                        />
-                        <span>{u.username}</span>
-                      </div>
-                    );
-                  })}
-              </div>
+        {/* Notifications */}
+        <div className="notification-wrapper">
+          <button
+            className="icon-btn"
+            onClick={() => setShowNotifications(!showNotifications)}
+          >
+            🔔
+            {notifications.some((n) => !n.isRead) && (
+              <span className="notification-badge" />
             )}
-          </div>
+          </button>
+
+          {showNotifications && (
+            <div className="notification-dropdown">
+              {notifications.length === 0 && (
+                <div className="notification-item">Bildirim yok</div>
+              )}
+              {notifications.map((n) => (
+                <div
+                  key={n._id}
+                  className={`notification-item ${n.isRead ? "read" : "unread"}`}
+                  onClick={() => handleNotificationClick(n)}
+                >
+                  {renderNotificationText(n)}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* RIGHT */}
-        <div className="navbar-right">
-          <Link to="/" className="icon-btn">
-            🏠
+        <div className="profile-menu">
+          <Link to={`/profile/${currentUser?._id}`} className="profile-link">
+            <img src={profilePic} alt="profile" className="avatar" />
+            <span className="username">{currentUser?.username}</span>
           </Link>
-
-          <div className="profile-menu">
-            <Link to={`/profile/${currentUser?._id}`} className="profile-link">
-              <img src={profilePic} alt="profile" className="avatar" />
-              <span className="username">{currentUser?.username}</span>
-            </Link>
-
-            <button className="logout-btn" onClick={logout}>
-              Logout
-            </button>
-          </div>
+          <button className="logout-btn" onClick={logout}>
+            Çıkış Yap
+          </button>
         </div>
       </div>
     </nav>
