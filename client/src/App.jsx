@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
+import PostDetails from "./pages/PostDetails";
 
 const PrivateRoute = ({ children }) => {
   const { user } = useAuth();
@@ -32,6 +33,15 @@ function AppRoutes() {
         element={
           <PrivateRoute>
             <Profile />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/post/:id"
+        element={
+          <PrivateRoute>
+            <PostDetails />
           </PrivateRoute>
         }
       />
