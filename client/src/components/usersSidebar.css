@@ -1,65 +1,102 @@
-.users-sidebar {
-  background-color: #fff;
-  padding: 15px;
-  border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  font-family: "Poppins", sans-serif;
+.users-sidebar-container {
+  background-color: #f7f9f9;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 20px;
 }
 
-.users-sidebar h3 {
-  margin-bottom: 12px;
-  font-size: 18px;
-  color: #333;
+.sidebar-header {
+  padding: 12px 16px;
 }
 
-.sidebar-user {
+.sidebar-header h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f1419;
+  margin: 0;
+}
+
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.suggestion-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  padding: 12px 16px;
+  transition: background 0.2s ease;
 }
 
-.user-left {
+.suggestion-item:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.user-info-link {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
-  color: inherit;
+  flex: 1;
+  min-width: 0;
 }
 
-.user-avatar {
+.user-avatar-md {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid #1da1f2;
   object-fit: cover;
 }
 
-.user-name {
-  font-weight: 600;
-  color: #333;
+.user-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
-.follow-btn {
-  background-color: #1da1f2;
+.display-name {
+  font-weight: 700;
+  color: #0f1419;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.username-tag {
+  color: #536471;
+  font-size: 0.85rem;
+}
+
+.follow-action-btn {
+  background-color: #0f1419;
   color: white;
   border: none;
-  border-radius: 12px;
-  padding: 5px 12px;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  font-size: 12px;
   transition: all 0.2s ease;
+  font-size: 1rem;
 }
 
-.follow-btn:hover {
-  background-color: #0d8ddb;
+.follow-action-btn:hover {
+  background-color: #272c30;
+  transform: scale(1.05);
 }
 
-.follow-btn.following {
-  background-color: #eee;
-  color: #333;
+.follow-action-btn.is-following {
+  background-color: transparent;
+  color: #1d9bf0;
+  border: 1px solid #cfd9de;
 }
 
-.follow-btn.following:hover {
-  background-color: #ccc;
+.follow-action-btn.is-following:hover {
+  background-color: #fee7ec;
+  color: #f4212e;
+  border-color: #fdc9ce;
 }
