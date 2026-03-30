@@ -1,97 +1,124 @@
 .trending-panel {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  width: 300px;
-  font-family: "Poppins", sans-serif;
+  gap: 16px;
+  position: sticky;
+  top: 10px;
 }
 
-.panel-card {
-  background-color: #fff;
-  border-radius: 15px;
-  padding: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.panel-section {
+  background: #f7f9f9;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid transparent;
 }
 
-.panel-card h3 {
-  margin-bottom: 12px;
-  font-size: 18px;
-  color: #333;
+.card-glass {
+  transition: all 0.3s ease;
 }
 
-.trend-item {
+.section-title {
+  padding: 12px 16px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f1419;
+  margin: 0;
+}
+
+.trend-row {
+  padding: 12px 16px;
   display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  flex-direction: column;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-.trend-item:last-child {
-  border-bottom: none;
+.trend-row:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.trend-category {
+  font-size: 0.75rem;
+  color: #536471;
 }
 
 .trend-tag {
-  font-weight: 600;
-  color: #1da1f2;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f1419;
+  margin: 2px 0;
 }
 
 .trend-count {
-  font-size: 13px;
-  color: #888;
+  font-size: 0.8rem;
+  color: #536471;
 }
 
-.suggestion-item {
+.suggested-user-row {
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
-  gap: 10px;
+  justify-content: space-between;
+  padding: 12px 16px;
+  transition: background 0.2s;
 }
 
-.suggestion-avatar {
+.suggested-user-row:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.suggested-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.mini-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #1da1f2;
 }
 
-.user-info {
-  flex: 1;
+.suggested-names {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  min-width: 0;
 }
 
-.user-info .name {
-  font-weight: 600;
-  color: #333;
+.display-name {
+  font-weight: 700;
+  color: #0f1419;
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.user-info .username {
-  font-size: 12px;
-  color: #666;
+.username-tag {
+  color: #536471;
+  font-size: 0.85rem;
 }
 
-.follow-btn {
-  background-color: #1da1f2;
-  color: white;
+.mini-follow-btn {
+  background: #0f1419;
+  color: #fff;
   border: none;
-  border-radius: 12px;
-  padding: 5px 12px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
   cursor: pointer;
-  font-size: 12px;
-  transition: all 0.2s ease;
+  transition: opacity 0.2s;
 }
 
-.follow-btn:hover {
-  background-color: #0d8ddb;
+.mini-follow-btn.active {
+  background: transparent;
+  color: #0f1419;
+  border: 1px solid #cfd9de;
 }
 
-.follow-btn.following {
-  background-color: #eee;
-  color: #333;
-}
-
-.follow-btn.following:hover {
-  background-color: #ccc;
+.mini-follow-btn:hover {
+  opacity: 0.8;
 }
