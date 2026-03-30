@@ -1,63 +1,76 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useUsers } from "../context/UserContext";
 import { useAuth } from "../context/AuthContext";
+import { FaUserPlus, FaUserCheck } from "react-icons/fa"; // İkonlar
 import "./usersSidebar.css";
 
 const UsersSidebar = () => {
-  const { allUsers, followUser, unfollowUser } = useUsers();
+  const { allUsers, followUser, unfollowUser, usersLoading } = useUsers();
   const { user: currentUser } = useAuth();
-
   const BASE_URL = "http://localhost:8800";
 
-  const suggestions = allUsers
-    ?.filter((u) => u._id !== currentUser?.user?._id)
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 8);
+  const suggestions = useMemo(() => {
+    if (!allUsers) return [];
+    return allUsers
+      .filter((u) => u._id !== currentUser?.user?._id)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 5);
+  }, [allUsers, currentUser?.user?._id]);
 
   const isFollowing = (user) => {
     return user.followers?.includes(currentUser?.user?._id);
   };
 
-  const handleFollowToggle = (user) => {
+  const handleFollowToggle = async (user) => {
     if (isFollowing(user)) {
-      unfollowUser(user._id);
+      await unfollowUser(user._id);
     } else {
-      followUser(user._id);
+      await followUser(user._id);
     }
   };
 
+  if (usersLoading) return <div className="sidebar-loading">Yükleniyor...</div>;
+
   return (
-    <div className="users-sidebar">
-      <h3>👥 Kullanıcılar</h3>
+    <div className="users-sidebar-container">
+      <div className="sidebar-header">
+        <h3>Kimi Takip Etmeli</h3>
+      </div>
 
-      {suggestions.map((user) => {
-        const profilePic = user.profilePic
-          ? `${BASE_URL}/images/${user.profilePic}`
-          : `https://api.dicebear.com/7.x/notionists/svg?seed=${user.username}`;
+      <div className="suggestions-list">
+        {suggestions.map((user) => {
+          const profilePic =
+            user.profilePic && user.profilePic.startsWith("http")
+              ? user.profilePic
+              : `https://api.dicebear.com/7.x/notionists/svg?seed=${user.username}`;
 
-        return (
-          <div key={user._id} className="sidebar-user">
-            <Link to={`/profile/${user._id}`} className="user-left">
-              <img
-                src={profilePic}
-                alt={user.username}
-                className="user-avatar"
-                onError={(e) => {
-                  e.target.src = `https://api.dicebear.com/7.x/notionists/svg?seed=${user.username}`;
-                }}
-              />
-              <span className="user-name">{user.username.split("@")[0]}</span>
-            </Link>
+          const following = isFollowing(user);
 
-            <button
-              className={`follow-btn ${isFollowing(user) ? "following" : ""}`}
-              onClick={() => handleFollowToggle(user)}
-            >
-              {isFollowing(user) ? "Takibi Bırak" : "Takip Et"}
-            </button>
-          </div>
-        );
-      })}
+          return (
+            <div key={user._id} className="suggestion-item">
+              <Link to={`/profile/${user._id}`} className="user-info-link">
+                <img src={profilePic} alt="" className="user-avatar-md" />
+                <div className="user-details">
+                  <span className="display-name">
+                    {user.username.split("@")[0]}
+                  </span>
+                  <span className="username-tag">
+                    @{user.username.toLowerCase()}
+                  </span>
+                </div>
+              </Link>
+
+              <button
+                className={`follow-action-btn ${following ? "is-following" : ""}`}
+                onClick={() => handleFollowToggle(user)}
+              >
+                {following ? <FaUserCheck /> : <FaUserPlus />}
+              </button>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
