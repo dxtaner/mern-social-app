@@ -24,15 +24,15 @@ export const PostProvider = ({ children }) => {
     }
   }, []);
 
+  const getPostById = (id) => posts.find((p) => p._id === id);
+
   const likePost = async (postId) => {
     if (!authUser) {
       alert("Beğenmek için önce giriş yapmalısın! 🔒");
       return;
     }
-
     try {
       const res = await API.put(`/posts/like/${postId}`);
-
       setPosts((prev) =>
         prev.map((post) => (post._id === postId ? res.data : post)),
       );
@@ -43,7 +43,6 @@ export const PostProvider = ({ children }) => {
 
   const deletePost = async (postId) => {
     if (!window.confirm("Bu gönderiyi silmek istediğinden emin misin?")) return;
-
     try {
       await API.delete(`/posts/${postId}`);
       setPosts((prev) => prev.filter((post) => post._id !== postId));
@@ -54,7 +53,14 @@ export const PostProvider = ({ children }) => {
 
   return (
     <PostContext.Provider
-      value={{ posts, loading, fetchAllPosts, likePost, deletePost }}
+      value={{
+        posts,
+        loading,
+        fetchAllPosts,
+        likePost,
+        deletePost,
+        getPostById,
+      }}
     >
       {children}
     </PostContext.Provider>
