@@ -32,9 +32,10 @@ const PostCard = ({ post }) => {
   };
 
   const displayName = postOwner?.username.split("@")[0] || "Kullanıcı";
-  const profilePic = postOwner?.profilePic
-    ? `${BASE_URL}/images/${postOwner.profilePic}`
-    : `https://api.dicebear.com/7.x/notionists/svg?seed=${displayName}`;
+  const profilePic =
+    postOwner?.profilePic && postOwner.profilePic.startsWith("http")
+      ? postOwner.profilePic
+      : `https://api.dicebear.com/7.x/notionists/svg?seed=${postOwner?.username || "unknown_user"}`;
 
   return (
     <div className="post-card">
@@ -63,7 +64,6 @@ const PostCard = ({ post }) => {
         )}
       </header>
 
-      {/* BODY */}
       <div className="post-body">
         {post.desc && <p className="post-desc">{post.desc}</p>}
         {post.img && (
@@ -84,7 +84,6 @@ const PostCard = ({ post }) => {
         )}
       </div>
 
-      {/* FOOTER */}
       <footer className="post-footer">
         <div className="post-actions">
           <button
@@ -102,16 +101,16 @@ const PostCard = ({ post }) => {
           </button>
         </div>
 
-        {/* COMMENTS */}
         {showComments && (
           <div className="comments-section">
             <div className="comments-list">
               {postComments.map((c) => {
                 const cUser = allUsers.find((u) => u._id === c.userId);
                 const cName = cUser?.username.split("@")[0] || "Kullanıcı";
-                const cPic = cUser?.profilePic
-                  ? `${BASE_URL}/images/${cUser.profilePic}`
-                  : `https://api.dicebear.com/7.x/notionists/svg?seed=${cName}`;
+                const cPic =
+                  cUser?.profilePic && cUser.profilePic.startsWith("http")
+                    ? cUser.profilePic
+                    : `https://api.dicebear.com/7.x/notionists/svg?seed=${cUser?.username || "unknown_user"}`;
                 return (
                   <div key={c._id} className="comment-item">
                     <img src={cPic} alt={cName} className="comment-avatar" />
