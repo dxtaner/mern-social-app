@@ -45,9 +45,10 @@ const CreatePost = () => {
   };
 
   const displayName = user?.user?.username?.split("@")[0] || "Kullanıcı";
-  const avatarSrc = user?.user?.profilePic
-    ? `http://localhost:8800/images/${user.user.profilePic}`
-    : `https://api.dicebear.com/7.x/notionists/svg?seed=${displayName}`;
+  const avatarSrc =
+    user?.user?.profilePic && user.user.profilePic.startsWith("http")
+      ? user.user.profilePic
+      : `https://api.dicebear.com/7.x/notionists/svg?seed=${displayName || "unknown_user"}`;
 
   return (
     <div className="share-card">
