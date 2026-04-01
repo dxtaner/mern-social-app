@@ -1,0 +1,274 @@
+.pd-wrapper {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  padding-top: 20px;
+}
+
+.pd-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 350px;
+  gap: 24px;
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.pd-center {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  border: 1px solid #eff3f4;
+}
+
+.pd-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 20px;
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  border-bottom: 1px solid #eff3f4;
+}
+
+.pd-header button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.pd-header button:hover {
+  background: #e8f5fd;
+}
+
+.pd-header h3 {
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.pd-card {
+  padding: 20px;
+}
+
+.pd-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  margin-bottom: 15px;
+}
+
+.pd-user img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #eee;
+}
+
+.pd-name {
+  display: block;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.pd-time {
+  font-size: 0.85rem;
+  color: #536471;
+}
+
+.pd-text {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #0f1419;
+  margin-bottom: 15px;
+  white-space: pre-wrap;
+}
+
+.pd-img {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 1px solid #eff3f4;
+  margin-bottom: 15px;
+}
+
+.pd-actions {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 12px 0;
+  border-top: 1px solid #eff3f4;
+  border-bottom: 1px solid #eff3f4;
+  color: #536471;
+  font-weight: 500;
+}
+
+.pd-like {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pd-like:hover {
+  transform: scale(1.1);
+  color: #f91880;
+}
+
+.pd-like.active {
+  color: #f91880;
+}
+
+.pd-delete {
+  margin-left: auto;
+  background: #fff0f0;
+  color: #ff4444;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.pd-delete:hover {
+  background: #ff4444;
+  color: white;
+}
+
+.pd-comment-form {
+  display: flex;
+  padding: 20px;
+  gap: 15px;
+  align-items: center;
+  border-bottom: 1px solid #eff3f4;
+}
+
+.pd-comment-form input {
+  flex: 1;
+  border: none;
+  padding: 12px;
+  font-size: 1.05rem;
+  outline: none;
+}
+
+.pd-comment-form button {
+  background: #1d9bf0;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.pd-comment-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pd-comment {
+  display: flex;
+  gap: 12px;
+  padding: 15px 20px;
+  border-bottom: 1px solid #f7f9f9;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.pd-comment:hover {
+  background: #f7f9f9;
+}
+
+.pd-comment img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.pd-comment-box {
+  flex: 1;
+}
+
+.pd-comment-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-right: 8px;
+}
+
+.pd-comment-box p {
+  margin: 4px 0 0;
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.pd-comment button {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 5px;
+}
+
+.pd-comment button:hover {
+  color: #ff4444;
+}
+
+.pd-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-weight: 600;
+  color: #1d9bf0;
+}
+
+.pd-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 350px;
+  gap: 24px;
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+@media (max-width: 1170px) {
+  .pd-grid {
+    grid-template-columns: 280px 1fr;
+  }
+  .pd-right {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .pd-grid {
+    grid-template-columns: 1fr;
+  }
+  .pd-left,
+  .pd-right {
+    display: none;
+  }
+  .pd-center {
+    border-radius: 12px;
+    padding: 12px;
+    margin: 0 10px;
+  }
+}
