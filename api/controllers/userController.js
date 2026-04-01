@@ -78,29 +78,31 @@ exports.followUser = async (req, res) => {
       return res.status(404).json("User not found");
     }
 
-    const isAlreadyFollowing = user.followers
-      .map((id) => id.toString())
-      .includes(currentUserId);
+    const isAlreadyFollowing = user.followers.includes(currentUserId);
 
     if (!isAlreadyFollowing) {
       await user.updateOne({ $push: { followers: currentUserId } });
       await currentUser.updateOne({ $push: { following: targetUserId } });
 
       try {
-        const newNotification = await Notification.create({
+        await Notification.create({
           senderId: currentUserId,
           receiverId: targetUserId,
           type: "follow",
         });
       } catch (notifErr) {
         console.error(
-          "KRİTİK HATA: Bildirim oluşturulurken hata alındı!",
+          "An error occurred whilst creating the notification:",
           notifErr.message,
         );
       }
+
       return res.status(200).json("User followed");
     } else {
-      return res.status(400).json("Already following");
+      await user.updateOne({ $pull: { followers: currentUserId } });
+      await currentUser.updateOne({ $pull: { following: targetUserId } });
+
+      return res.status(200).json("User unfollowed");
     }
   } catch (err) {
     return res.status(500).json({ error: "Server error", detail: err.message });
