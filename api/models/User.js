@@ -32,20 +32,37 @@ const UserSchema = new mongoose.Schema(
       default: "",
     },
 
+    location: {
+      type: String,
+      default: "",
+    },
+
     bio: {
       type: String,
       max: 150,
     },
 
-    followers: {
-      type: [String],
-      default: [],
+    birthDate: {
+      type: Date,
     },
 
-    following: {
-      type: [String],
-      default: [],
+    lastLogin: {
+      type: Date,
     },
+
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true },
 );
