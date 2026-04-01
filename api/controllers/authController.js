@@ -38,6 +38,9 @@ exports.login = async (req, res) => {
       return res.status(400).json("Wrong password");
     }
 
+    user.lastLogin = new Date();
+    await user.save();
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
@@ -57,6 +60,7 @@ exports.login = async (req, res) => {
         user: userData,
       });
   } catch (err) {
+    console.error("Login error:", err);
     res.status(500).json(err);
   }
 };
