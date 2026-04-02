@@ -1,8 +1,12 @@
 const Comment = require("../models/Comment");
 const Notification = require("../models/Notification");
+const Post = require("../models/Post");
 
 exports.addComment = async (req, res) => {
   try {
+    const post = await Post.findById(req.body.postId);
+    if (!post) return res.status(404).json("Post Not Found");
+
     const newComment = new Comment({
       userId: req.user.id,
       postId: req.body.postId,
@@ -11,16 +15,23 @@ exports.addComment = async (req, res) => {
 
     const savedComment = await newComment.save();
 
-    await Notification.create({
-      senderId: req.user.id,
-      receiverId: post.userId,
-      type: "comment",
-      postId: post._id,
-    });
+    try {
+      if (post.userId.toString() !== req.user.id) {
+        await Notification.create({
+          senderId: req.user.id,
+          receiverId: post.userId,
+          type: "comment",
+          postId: post._id,
+        });
+      }
+    } catch (nErr) {
+      console.log("The notification could not be created:", nErr.message);
+    }
 
     res.status(200).json(savedComment);
   } catch (err) {
-    res.status(500).json(err);
+    console.error("Comments Error:", err);
+    res.status(500).json({ error: err.message });
   }
 };
 
