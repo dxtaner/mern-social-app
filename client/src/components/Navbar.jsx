@@ -15,13 +15,15 @@ const Navbar = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const BASE_URL = "http://localhost:8800";
   const currentUser = user?.user;
 
-  const profilePic = currentUser?.profilePic
-    ? `${BASE_URL}/images/${currentUser.profilePic}`
-    : `https://api.dicebear.com/7.x/initials/svg?seed=${currentUser?.username}`;
+  const profilePic =
+    currentUser?.profilePic && currentUser.profilePic.startsWith("http")
+      ? currentUser.profilePic
+      : `https://api.dicebear.com/7.x/initials/svg?seed=${currentUser?.username || "unknown_user"}`;
 
   const useDebounce = (value, delay) => {
     const [debouncedValue, setDebouncedValue] = useState(value);
@@ -49,6 +51,7 @@ const Navbar = () => {
   const handleSelectUser = (id) => {
     setSearch("");
     setFilteredUsers([]);
+    setMobileMenuOpen(false);
     navigate(`/profile/${id}`);
   };
 
@@ -85,15 +88,18 @@ const Navbar = () => {
   const handleNotificationClick = (n) => {
     markAsRead(n._id);
     setShowNotifications(false);
+    setMobileMenuOpen(false);
 
-    if (n.type === "follow") {
-      navigate(`/profile/${n.senderId}`);
-    } else if (n.postId) {
-      navigate(`/post/${n.postId}`);
-    } else {
-      navigate(`/profile/${n.senderId}`);
-    }
+    if (n.type === "follow") navigate(`/profile/${n.senderId}`);
+    else if (n.postId) navigate(`/post/${n.postId}`);
+    else navigate(`/profile/${n.senderId}`);
   };
+
+  const groupedNotifications = notifications.reduce((acc, n) => {
+    if (!acc[n.type]) acc[n.type] = [];
+    acc[n.type].push(n);
+    return acc;
+  }, {});
 
   return (
     <nav className="navbar">
@@ -103,9 +109,17 @@ const Navbar = () => {
         </Link>
       </div>
 
-      <div className="navbar-center">
+      <div className="navbar-hamburger">
+        <button
+          className="hamburger-btn"
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+        >
+          ☰
+        </button>
+      </div>
+
+      <div className={`navbar-right ${mobileMenuOpen ? "open" : ""}`}>
         <div className="search-box">
-          <span className="search-icon">🔍</span>
           <input
             type="text"
             placeholder="Kullanıcı ara..."
@@ -127,7 +141,9 @@ const Navbar = () => {
                 return (
                   <div
                     key={u._id}
-                    className={`search-item ${index === activeIndex ? "active" : ""}`}
+                    className={`search-item ${
+                      index === activeIndex ? "active" : ""
+                    }`}
                     onClick={() => handleSelectUser(u._id)}
                   >
                     <img src={pic} alt={u.username} className="search-avatar" />
@@ -138,18 +154,15 @@ const Navbar = () => {
             </div>
           )}
         </div>
-      </div>
 
-      <div className="navbar-right">
         <Link to="/" className="icon-btn">
           🏠
         </Link>
 
-        {/* Notifications */}
         <div className="notification-wrapper">
           <button
             className="icon-btn"
-            onClick={() => setShowNotifications(!showNotifications)}
+            onClick={() => setShowNotifications((prev) => !prev)}
           >
             🔔
             {notifications.some((n) => !n.isRead) && (
@@ -162,13 +175,22 @@ const Navbar = () => {
               {notifications.length === 0 && (
                 <div className="notification-item">Bildirim yok</div>
               )}
-              {notifications.map((n) => (
-                <div
-                  key={n._id}
-                  className={`notification-item ${n.isRead ? "read" : "unread"}`}
-                  onClick={() => handleNotificationClick(n)}
-                >
-                  {renderNotificationText(n)}
+              {Object.entries(groupedNotifications).map(([type, items]) => (
+                <div key={type} className="notification-group">
+                  <div className="notification-group-title">
+                    {type.toUpperCase()} ({items.length})
+                  </div>
+                  {items.map((n) => (
+                    <div
+                      key={n._id}
+                      className={`notification-item ${
+                        n.isRead ? "read" : "unread"
+                      }`}
+                      onClick={() => handleNotificationClick(n)}
+                    >
+                      {renderNotificationText(n)}
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
@@ -181,7 +203,7 @@ const Navbar = () => {
             <span className="username">{currentUser?.username}</span>
           </Link>
           <button className="logout-btn" onClick={logout}>
-            Çıkış Yap
+            Çıkış
           </button>
         </div>
       </div>
