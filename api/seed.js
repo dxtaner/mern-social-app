@@ -1,162 +1,195 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const User = require("./models/User");
 const Post = require("./models/Post");
 const Comment = require("./models/Comment");
 const Notification = require("./models/Notification");
-
 const connectDB = require("./config/db");
 
 const seedData = async () => {
   try {
     await connectDB();
-    console.log("DB connected...");
+    console.log("🚀 Veritabanına bağlanıldı. Temizlik başlıyor...");
 
-    // 🔥 Clean collections
-    await User.deleteMany();
-    await Post.deleteMany();
-    await Comment.deleteMany();
-    await Notification.deleteMany();
-
-    // 👤 USERS (DAHA FAZLA)
-    const users = await User.insertMany([
-      { username: "taner", email: "taner@test.com", password: "123456" },
-      { username: "ahmet", email: "ahmet@test.com", password: "123456" },
-      { username: "mehmet", email: "mehmet@test.com", password: "123456" },
-      { username: "ayse", email: "ayse@test.com", password: "123456" },
-      { username: "fatma", email: "fatma@test.com", password: "123456" },
-      { username: "ali", email: "ali@test.com", password: "123456" },
-      { username: "veli", email: "veli@test.com", password: "123456" },
-      { username: "zeynep", email: "zeynep@test.com", password: "123456" },
-      { username: "can", email: "can@test.com", password: "123456" },
-      { username: "elif", email: "elif@test.com", password: "123456" },
+    await Promise.all([
+      User.deleteMany(),
+      Post.deleteMany(),
+      Comment.deleteMany(),
+      Notification.deleteMany(),
     ]);
+    console.log("🧹 Tüm eski veriler silindi.");
 
-    console.log("Users added");
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash("123456", saltRounds);
 
-    // 📝 POSTS (her user için post)
-    const posts = [];
+    const cities = [
+      "İstanbul",
+      "Ankara",
+      "İzmir",
+      "Antalya",
+      "Bursa",
+      "Eskişehir",
+      "Muğla",
+      "Trabzon",
+      "Adana",
+      "Gaziantep",
+    ];
 
-    users.forEach((user, index) => {
-      for (let i = 1; i <= 3; i++) {
-        posts.push({
-          userId: user._id,
-          desc: `Post ${i} by ${user.username} 🚀`,
-          img: `https://picsum.photos/seed/${user.username + i}/500`,
+    const bioTemplates = [
+      "Yazılım geliştirici 💻",
+      "Gezgin 🌍",
+      "Tasarım meraklısı ✨",
+      "Fotoğrafçı 📸",
+      "Kitap kurdu 🐈",
+      "Müzisyen 🎸",
+      "Gelecek burada! 🚀",
+      "Gastronomi tutkunu 🍝",
+    ];
+
+    const userNames = [
+      "taner_dev",
+      "asli_y",
+      "mert_demir",
+      "selin_g",
+      "deniz_kaya",
+      "can_oz",
+      "ezgi_su",
+      "burak_x",
+      "melis_v",
+      "onur_dev",
+      "ayse_bulut",
+      "murat_han",
+      "zeynep_ada",
+      "berk_can",
+      "elif_nur",
+      "hakan_y",
+      "gamze_t",
+      "emre_b",
+      "ipek_s",
+      "koray_v",
+      "pelin_d",
+      "serkan_m",
+      "nil_su",
+      "oguz_k",
+      "didem_a",
+    ];
+
+    const users = await User.insertMany(
+      userNames.map((username) => ({
+        username,
+        email: `${username}@test.com`,
+        password: hashedPassword,
+        bio: bioTemplates[Math.floor(Math.random() * bioTemplates.length)],
+        location: cities[Math.floor(Math.random() * cities.length)],
+        coverPic: `https://picsum.photos/seed/${username}cover/1200/400`,
+        profilePic: `https://i.pravatar.cc/150?u=${username}`,
+        followers: [],
+        following: [],
+      })),
+    );
+    console.log(`👤 ${users.length} kullanıcı eklendi.`);
+
+    const postCaptions = [
+      "Harika bir gün! ☀️",
+      "Yeni proje yayında! 💻",
+      "Kahve molası... ☕",
+      "Manzara efsane 😍",
+      "Kod yazmak sanattır. 🎨",
+      "Hafta sonu modu 🚗",
+      "Yeni bir başlangıç 🌅",
+      "React çok güçlü ⚛️",
+      "Akşam yemeği keyfi 🍝",
+    ];
+
+    const postsToInsert = [];
+    users.forEach((user) => {
+      const postCount = Math.floor(Math.random() * 3) + 2;
+      for (let i = 1; i <= postCount; i++) {
+        postsToInsert.push({
+          userId: user._id.toString(),
+          desc: postCaptions[Math.floor(Math.random() * postCaptions.length)],
+          img: `https://picsum.photos/seed/${user.username + i}/800/600`,
           likes: [],
         });
       }
     });
 
-    const insertedPosts = await Post.insertMany(posts);
-    console.log("Posts added");
+    const insertedPosts = await Post.insertMany(postsToInsert);
+    console.log(`🖼️ ${insertedPosts.length} gönderi eklendi.`);
 
-    // 💬 COMMENTS (random dağıtım)
-    const comments = [];
-
-    insertedPosts.forEach((post, index) => {
-      const randomUser1 = users[Math.floor(Math.random() * users.length)];
-      const randomUser2 = users[Math.floor(Math.random() * users.length)];
-
-      comments.push(
-        {
-          userId: randomUser1._id,
-          postId: post._id,
-          desc: "Çok iyi 🔥",
-        },
-        {
-          userId: randomUser2._id,
-          postId: post._id,
-          desc: "Harika 👍",
-        },
-      );
-    });
-
-    await Comment.insertMany(comments);
-    console.log("Comments added");
-
-    // ❤️ LIKES (random like ekleme)
     for (let post of insertedPosts) {
-      const randomUsers = users
+      const randomLikes = users
         .sort(() => 0.5 - Math.random())
-        .slice(0, Math.floor(Math.random() * users.length));
+        .slice(0, Math.floor(Math.random() * 15))
+        .map((u) => u._id.toString());
 
-      await Post.findByIdAndUpdate(post._id, {
-        $set: {
-          likes: randomUsers.map((u) => u._id),
-        },
-      });
+      await Post.findByIdAndUpdate(post._id, { $set: { likes: randomLikes } });
     }
 
-    console.log("Likes added");
+    const commentTexts = [
+      "Harika!",
+      "Çok iyi 🔥",
+      "Katılıyorum 💯",
+      "Efsane",
+      "Başarılar!",
+      "👏👏",
+    ];
 
-    // 👥 FOLLOW SYSTEM (random follow)
-    for (let i = 0; i < users.length; i++) {
-      const following = users
-        .filter((u) => u._id.toString() !== users[i]._id.toString())
+    const commentsToInsert = [];
+    insertedPosts.forEach((post) => {
+      const commentCount = Math.floor(Math.random() * 3);
+      for (let i = 0; i < commentCount; i++) {
+        const commenter = users[Math.floor(Math.random() * users.length)];
+        commentsToInsert.push({
+          userId: commenter._id.toString(),
+          postId: post._id.toString(),
+          desc: commentTexts[Math.floor(Math.random() * commentTexts.length)],
+        });
+      }
+    });
+
+    await Comment.insertMany(commentsToInsert);
+
+    for (let user of users) {
+      const followingList = users
+        .filter((u) => u._id.toString() !== user._id.toString())
         .sort(() => 0.5 - Math.random())
-        .slice(0, 3);
+        .slice(0, 6)
+        .map((u) => u._id.toString());
 
-      await User.findByIdAndUpdate(users[i]._id, {
-        $set: {
-          following: following.map((u) => u._id),
-        },
+      await User.findByIdAndUpdate(user._id, {
+        $set: { following: followingList },
       });
 
-      for (let f of following) {
-        await User.findByIdAndUpdate(f._id, {
-          $addToSet: {
-            followers: users[i]._id,
-          },
+      for (let targetId of followingList) {
+        await User.findByIdAndUpdate(targetId, {
+          $addToSet: { followers: user._id.toString() },
         });
       }
     }
 
-    console.log("Follow relations added");
-
-    // 🔔 NOTIFICATIONS (çoklu)
     const notifications = [];
-
-    insertedPosts.slice(0, 10).forEach((post) => {
-      const randomSender = users[Math.floor(Math.random() * users.length)];
-
-      notifications.push(
-        {
-          senderId: randomSender._id,
-          receiverId: post.userId,
-          type: "like",
-          postId: post._id,
-        },
-        {
-          senderId: randomSender._id,
-          receiverId: post.userId,
-          type: "comment",
-          postId: post._id,
-        },
-      );
-    });
-
-    users.forEach((user) => {
-      const randomFollow = users[Math.floor(Math.random() * users.length)];
-
-      if (user._id.toString() !== randomFollow._id.toString()) {
+    insertedPosts.slice(0, 20).forEach((post) => {
+      const sender = users.find((u) => u._id.toString() !== post.userId);
+      if (sender) {
         notifications.push({
-          senderId: user._id,
-          receiverId: randomFollow._id,
-          type: "follow",
+          senderId: sender._id.toString(),
+          receiverId: post.userId,
+          type: Math.random() > 0.5 ? "like" : "comment",
+          postId: post._id.toString(),
+          isRead: false,
         });
       }
     });
 
     await Notification.insertMany(notifications);
 
-    console.log("Notifications added");
-
-    console.log("🔥 SEED COMPLETED SUCCESSFULLY");
-    process.exit();
+    console.log("\n🔥 TÜM VERİLER BAŞARIYLA OLUŞTURULDU!");
+    process.exit(0);
   } catch (err) {
-    console.error("Seed error:", err);
+    console.error("❌ Seed hatası:", err);
     process.exit(1);
   }
 };
