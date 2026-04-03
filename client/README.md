@@ -1,16 +1,92 @@
-# React + Vite
+📱 Social Media App - Architecture
+==================================
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This application implements a robust **routing and authentication system** using React and React Router v6. It ensures a secure user experience by managing access levels based on the user's authentication state.
 
-Currently, two official plugins are available:
+* * *
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+🚀 Key Features
+---------------
 
-## React Compiler
+*   **Dynamic Navigation:** Seamless page transitions using `react-router-dom`.
+*   **Global Auth State:** Centralized user management via `Context API`.
+*   **Route Protection:** Preventing unauthorized access to sensitive pages.
+*   **Smart Redirects:** Automatically sending logged-in users away from Login/Register pages.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+🛠️ Tech Stack
+--------------
 
-## Expanding the ESLint configuration
+Technology
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Purpose
+
+React.js
+
+Frontend UI Library
+
+React Router v6
+
+Client-side Routing
+
+Context API
+
+State Management
+
+📂 Route Definition & Permissions
+---------------------------------
+
+Path
+
+Component
+
+Access Type
+
+`/`
+
+Home
+
+🔒 Private
+
+`/profile/:id`
+
+Profile
+
+🔒 Private
+
+`/post/:id`
+
+PostDetails
+
+🔒 Private
+
+`/login`
+
+Login
+
+🔓 Public
+
+`/register`
+
+Register
+
+🔓 Public
+
+🛡️ Guard Logic
+---------------
+
+### 1\. PrivateRoute
+
+Restricts access to authenticated users only. Unauthenticated visitors are redirected to `/login`.
+
+### 2\. PublicRoute
+
+Reserved for guests. If an authenticated user tries to access these, they are redirected to the `Home` page.
+
+💻 How to Run
+-------------
+
+\# Install dependencies
+npm install react-router-dom
+
+# Start the development server
+npm start
