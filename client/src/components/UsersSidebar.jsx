@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useUsers } from "../context/UserContext";
 import { useAuth } from "../context/AuthContext";
-import { FaUserPlus, FaUserCheck } from "react-icons/fa"; // İkonlar
+import { FaUserPlus, FaUserCheck } from "react-icons/fa";
 import "./usersSidebar.css";
 
 const UsersSidebar = () => {
