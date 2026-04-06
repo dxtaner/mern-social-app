@@ -6,6 +6,28 @@ A comprehensive social media application built with the **MERN Stack** (MongoDB,
 
 MongoDB Express.js React.js Node.js JWT Auth Redux/Context
 
+## 🖼️ Project Showcases
+
+Below are previews showing the app’s key features:
+
+### 🏠 Home Feed & Interaction
+The homepage feed includes post sharing and real-time interactions.
+![HomePost](./screenshot/HomePost.gif)
+
+---
+
+### 🔐 Auth System
+A user authentication system covering secure registration and login processes.
+![LoginRegister](./screenshot/LoginRegister.gif)
+
+---
+
+### 👤 User Profile
+An area where users can manage their own posts and edit their profile information.
+![ProfilePost](./screenshot/ProfilePost.gif)
+
+---
+
 🚀 Core Features
 ----------------
 
