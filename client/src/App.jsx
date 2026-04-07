@@ -1,10 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import PostDetails from "./pages/PostDetails";
+
+import VerifyEmail from "./pages/VerifyEmail";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const PrivateRoute = ({ children }) => {
   const { user } = useAuth();
@@ -19,6 +24,7 @@ const PublicRoute = ({ children }) => {
 function AppRoutes() {
   return (
     <Routes>
+      {/* PRIVATE */}
       <Route
         path="/"
         element={
@@ -27,7 +33,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/profile/:id"
         element={
@@ -36,7 +41,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/post/:id"
         element={
@@ -46,6 +50,7 @@ function AppRoutes() {
         }
       />
 
+      {/* PUBLIC */}
       <Route
         path="/login"
         element={
@@ -54,7 +59,6 @@ function AppRoutes() {
           </PublicRoute>
         }
       />
-
       <Route
         path="/register"
         element={
@@ -63,6 +67,10 @@ function AppRoutes() {
           </PublicRoute>
         }
       />
+
+      <Route path="/verify-email/:token" element={<VerifyEmail />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
     </Routes>
   );
 }
