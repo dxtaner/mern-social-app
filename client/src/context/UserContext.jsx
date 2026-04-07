@@ -10,33 +10,45 @@ import { useAuth } from "./AuthContext";
 
 const UserContext = createContext();
 
+export const useUsers = () => useContext(UserContext);
+
 export const UserProvider = ({ children }) => {
   const [allUsers, setAllUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
+
   const { user: authUser, updateUser } = useAuth();
 
   const fetchAllUsers = useCallback(async () => {
+    // 🔥 TOKEN YOKSA ÇALIŞMA
+    if (!authUser?.token) return;
+
     setUsersLoading(true);
     try {
       const res = await API.get("/users/all");
       setAllUsers(res.data);
     } catch (err) {
-      console.error("Kullanıcılar listesi çekilemedi:", err);
+      if (err.response?.status !== 401) {
+        console.error("Kullanıcılar listesi çekilemedi:", err);
+      }
     } finally {
       setUsersLoading(false);
     }
-  }, []);
+  }, [authUser]);
 
-  // TAKİP ET
+  // ✅ TAKİP ET
   const followUser = async (targetId) => {
     try {
       await API.put(`/users/follow/${targetId}`);
+
       const currentUserId = authUser?.user?._id;
 
       setAllUsers((prev) =>
         prev.map((u) =>
           u._id === targetId
-            ? { ...u, followers: [...(u.followers || []), currentUserId] }
+            ? {
+                ...u,
+                followers: [...(u.followers || []), currentUserId],
+              }
             : u,
         ),
       );
@@ -53,9 +65,11 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  // ❌ TAKİBİ BIRAK
   const unfollowUser = async (targetId) => {
     try {
       await API.put(`/users/unfollow/${targetId}`);
+
       const currentUserId = authUser?.user?._id;
 
       setAllUsers((prev) =>
@@ -103,5 +117,3 @@ export const UserProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
-
-export const useUsers = () => useContext(UserContext);
